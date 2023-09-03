@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit User</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"] {
+      width: 100%; /* 100% ширина поля ввода */
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    /* Уменьшение ширины поля ввода имени */
+    #name {
+      width: 80%; /* Уменьшили ширину до 80% от родительской ширины */
+    }
+
+    /* Уменьшение ширины поля ввода фамилии */
+    #last_name {
+      width: 80%; /* Уменьшили ширину до 80% от родительской ширины */
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/{id}(id=${user.getId()})}" th:object="${user}">
+  <h1>Edit User</h1>
+  <label for="name">Enter name:</label>
+  <input type="text" th:field="*{name}" id="name"/>
+  <label for="last_name">Enter last name:</label>
+  <input type="text" th:field="*{last_name}" id="last_name"/>
+  <input type="submit" value="Update"/>
+</form>
+
+</body>
+</html>
