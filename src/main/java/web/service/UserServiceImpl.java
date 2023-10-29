@@ -2,49 +2,80 @@ package web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
 import web.repositories.UsersRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
-public class UserServiceImpl implements UserService {
-
-    private final UsersRepository usersRepository;
+public class UserServiceImpl {
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    private UsersRepository repository;
+
+
+    public List<User> getAllUsers()   {
+        List<User> result = (List<User>) repository.findAll();
+
+        if(result.size() > 0) {
+            return result;
+        } else {
+            return new ArrayList<User>();
+        }
     }
 
-    @Override
-    public List<User> getAllUsers() {
-        return usersRepository.findAll();
+
+    public User getUserById(long id) {
+        Optional< User > optional = repository.findById(id);
+
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            throw new RuntimeException(" Employee not found for id :: " + id);
+        }
     }
 
-    @Override
-    public User getUser(int id) {
-        return usersRepository.findById(id).orElse(null);
+
+    public User createOrUpdateUser(User user) {
+
+        if(user.getId() == null)
+        {
+            user = repository.save(user);
+
+            return user;
+        }
+        else
+        {
+            Optional<User> employee = repository.findById(user.getId());
+
+            if(employee.isPresent())
+            {
+                User newEntity = employee.get();
+                newEntity.setEmail(user.getEmail());
+                newEntity.setFirstName(user.getFirstName());
+                newEntity.setLastName(user.getLastName());
+
+                newEntity = repository.save(newEntity);
+
+                return newEntity;
+            } else {
+                user = repository.save(user);
+
+                return user;
+            }
+        }
     }
 
-    @Override
-    @Transactional
-    public void saveUser(User user) {
-        usersRepository.save(user);
-    }
+    public void deleteUserById(long id) throws RuntimeException {
+        Optional<User> employee = repository.findById(id);
 
-    @Override
-    @Transactional
-    public void updateUser(int id, User user) {
-        user.setId(id);
-        usersRepository.save(user);
-    }
-
-    @Override
-    @Transactional
-    public void deleteUser(int id) {
-        usersRepository.deleteById(id);
+        if(employee.isPresent())
+        {
+            repository.deleteById(id);
+        } else {
+            throw new RuntimeException("No employee record exist for given id");
+        }
     }
 }
