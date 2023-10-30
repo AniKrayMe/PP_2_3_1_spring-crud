@@ -22,6 +22,8 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
@@ -46,7 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
 
         templateResolver.setApplicationContext(applicationContext);
-        templateResolver.setPrefix("/WEB-INF/pages/*");
+        templateResolver.setPrefix("/WEB-INF/pages/");
         templateResolver.setSuffix(".html");
         templateResolver.setCharacterEncoding("UTF-8");
 
@@ -68,7 +70,8 @@ public class WebConfig implements WebMvcConfigurer {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 
         resolver.setTemplateEngine(templateEngine());
-        resolver.setCharacterEncoding("UTF-8");
+//        resolver.setCharacterEncoding("UTF-8");
+        resolver.setContentType("text/html; charset=UTF-8");
 
         registry.viewResolver(resolver);
     }
@@ -85,12 +88,15 @@ public class WebConfig implements WebMvcConfigurer {
         return dataSource;
     }
 
+
     private Properties hibernateProperties() {
         Properties properties = new Properties();
-
-        properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("hibernate.properties");
+            properties.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return properties;
     }
 

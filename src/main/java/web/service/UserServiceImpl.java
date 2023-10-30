@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService{
 
     @Autowired
     private UsersRepository repository;
 
-
+    @Override
     public List<User> getAllUsers()   {
         List<User> result = (List<User>) repository.findAll();
 
@@ -27,6 +27,7 @@ public class UserServiceImpl {
     }
 
 
+    @Override
     public User getUserById(long id) {
         Optional< User > optional = repository.findById(id);
 
@@ -37,7 +38,7 @@ public class UserServiceImpl {
         }
     }
 
-
+    @Override
     public User createOrUpdateUser(User user) {
 
         if(user.getId() == null)
@@ -67,7 +68,7 @@ public class UserServiceImpl {
             }
         }
     }
-
+    @Override
     public void deleteUserById(long id) throws RuntimeException {
         Optional<User> employee = repository.findById(id);
 
